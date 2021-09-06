@@ -25,7 +25,8 @@ unsupervised_segment <- function(data, hyperparameters, verbose = TRUE){
     segmentation_variables <- colnames(data)
     
   }else{
-    variables <- c("customerid", hyperparameters$segmentation_variables)
+    segmentation_variables <- hyperparameters$segmentation_variables
+    variables <- c("customerid", segmentation_variables)
     data <- data[, variables]
 
   }
@@ -160,7 +161,7 @@ unsupervised_segment <- function(data, hyperparameters, verbose = TRUE){
         scores[i,"withinss"] <-kk$tot.withinss
         
       }else{
-        kk <- kproto(data, k=i, iter.max=hyperparameters$iter_max, nstart= hyperparameters$nstart, lambda = lambda, verbose = TRUE)
+        kk <- kproto(data, k=i, iter.max=hyperparameters$iter_max, nstart= hyperparameters$nstart, lambda = lambda, verbose = FALSE)
         scores[i,"withinss"] <-kk$tot.withinss
         
       }

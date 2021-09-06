@@ -4,7 +4,9 @@
 \alias{validate}
 \title{Validation function}
 \usage{
+
 validate(df, supervised = TRUE, force, hyperparameters)
+
 }
 \arguments{
 \item{df}{data.frame, the data to validate}
