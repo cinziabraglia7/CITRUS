@@ -91,19 +91,34 @@ preprocess <- function(df,
 
   if (!is.null(categories)) {
     for (col_name in categories) {
+      if(!is.na(target)) {
+        temp_df <- df %>%
+          select(-target) %>%
+          group_by(.data$customerid, !!as.symbol(col_name)) %>%
+          summarise(n = n()) %>%
+          ungroup() %>%
+          group_by(.data$customerid) %>%
+          arrange(desc(n)) %>%
+          filter(row_number() == 1) %>%
+          ungroup() %>%
+          select(-n)
+        var <- paste0('top_', col_name)
+        temp_df[var] <- temp_df[col_name]
+        
+      } else {
+        temp_df <- df %>%
+          group_by(.data$customerid, !!as.symbol(col_name)) %>%
+          summarise(n = n()) %>%
+          ungroup() %>%
+          group_by(.data$customerid) %>%
+          arrange(desc(n)) %>%
+          filter(row_number() == 1) %>%
+          ungroup() %>%
+          select(-n)
+        var <- paste0('top_', col_name)
+        temp_df[var] <- temp_df[col_name]
+      }
       
-      temp_df <- df %>%
-        select(-target) %>%
-        group_by(.data$customerid, !!as.symbol(col_name)) %>%
-        summarise(n = n()) %>%
-        ungroup() %>%
-        group_by(.data$customerid) %>%
-        arrange(desc(n)) %>%
-        filter(row_number() == 1) %>%
-        ungroup() %>%
-        select(-n)
-      var <- paste0('top_', col_name)
-      temp_df[var] <- temp_df[col_name]
       
       final_df <- inner_join(final_df, temp_df, by = 'customerid')
     }
